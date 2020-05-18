@@ -92,7 +92,7 @@ class IpAddress {
     // For more information, consult the Log Class guide on the Itential
     // Developer Hub https://developer.itential.io/ located
     // under Documentation -> Developer Guides -> Log Class Guide
-    log.info('Starting the IpAddress product.');
+    //log.info('Starting the IpAddress product.');
   }
 
 
@@ -112,22 +112,42 @@ class IpAddress {
     from: 1,
     limit: 1
   };
-  // Use the object's isValid() method to verify the passed CIDR.
-  if (!cidr.isValid()) {
-    // If the passed CIDR is invalid, set an error message.
-    callbackError = 'Error: Invalid CIDR passed to getFirstIpAddress.';
-  } else {
-    // If the passed CIDR is valid, call the object's toArray() method.
-    // Notice the destructering assignment syntax to get the value of the first array's element.
-    [firstIpAddress] = cidr.toArray(options);
 
-  }
 
-  // Call the passed callback function.
-  // Node.js convention is to pass error data as the first argument to a callback.
-  // The IAP convention is to pass returned data as the first argument and error
-  // data as the second argument to the callback function.
-  return callback(firstIpAddress, callbackError);
+ /** 
+  * An object which will represent two strings ipv4 and ipv6 
+  *  
+  * @param {ipv4} ipv4 address 
+  * @param {ipv6} ipv6 address 
+  *  
+  */ 
+ const netFormats = { 
+  ipv4: null, 
+   ipv6: null, 
+ }; 
+ 
+ 
+  // Use the object's isValid() method to verify the passed CIDR. 
+   if (!cidr.isValid()) { 
+     // If the passed CIDR is invalid, set an error message. 
+     callbackError = 'Error: Invalid CIDR passed to getFirstIpAddress.'; 
+   } else { 
+     // If the passed CIDR is valid, call the object's toArray() method. 
+     // Notice the destructering assignment syntax to get the value of the first array's element. 
+     [firstIpAddress] = cidr.toArray(options); 
+   } 
+    
+ /** 
+  * It will create an object for net formats which will include ipv4 and ipv6 as a string attribute 
+ **/ 
+ const format = Object.create(netFormats); 
+ format.ipv4 = firstIpAddress; 
+ (firstIpAddress == null) ? format.ipv6 = null: format.ipv6 = getIpv4MappedIpv6Address(firstIpAddress); 
+ // Node.js convention is to pass error data as the first argument to a callback. 
+  // The IAP convention is to pass returned data as the first argument and error 
+  // data as the second argument to the callback function. 
+  // Call the passed callback function. 
+  return callback(format, callbackError);
 
  }
 }
